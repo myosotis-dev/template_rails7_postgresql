@@ -33,8 +33,10 @@ RUN \
 	&& gem install bundler -v 2.4.12 \
 	&& rails -v
 
-
 COPY ./ /opt/app/
 
+RUN bundle install
 
+EXPOSE 3000
 
+ENTRYPOINT ["sh", "entrypoint.sh"]
