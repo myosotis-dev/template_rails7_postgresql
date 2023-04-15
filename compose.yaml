@@ -1,0 +1,42 @@
+services:
+  app:
+    tty: true
+    env_file:
+      - ./.env
+    depends_on:
+      mysql:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: "${DOCKER_HUB_ID}/rails_app:ruby3-rails7-dev-1.0"
+    container_name: rails
+    volumes:
+      - .:/opt/app/
+    ports:
+      - 3000:3000
+    healthcheck:
+      test: ["CMD", "curl", "-m", "5", "http://localhost:3000"]
+      interval: 15s
+      timeout: 5s
+      retries: 4
+      start_period: 10s
+
+  mysql:
+    image: mysql:8.0.32-oracle   # arm image (only oracle linux base)
+    container_name: mysql
+    env_file:
+      - ./.env
+    ports:
+      - 3306:3306
+    volumes:
+      - mysql-store:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$MYSQL_DATABASE", "-p$MYSQL_ROOT_PASSWORD"]
+      interval: 30s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  mysql-store:
