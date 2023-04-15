@@ -10,6 +10,12 @@ RUN \
 		build-essential \
 		curl \
 
+		# for sqlite
+		# libsqlite3-dev \
+
+		# for mysql or maria-db
+		libmariadb-dev \
+
 		# when creating rails project.
 		# git \
 
