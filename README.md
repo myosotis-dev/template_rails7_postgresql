@@ -1,4 +1,4 @@
-# hands on Ruby on Rails7 MySQL
+# hands on Ruby on Rails7 PostgreSQL
 
 This README would normally document whatever steps are necessary to get the
 application up and running.

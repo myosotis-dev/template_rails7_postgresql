@@ -4,8 +4,9 @@ services:
     env_file:
       - ./.env
     depends_on:
-      mysql:
-        condition: service_healthy
+      - postgresql
+      # mysql:
+      #   condition: service_healthy
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -22,41 +23,56 @@ services:
       retries: 4
       start_period: 10s
 
-  mysql:
-    image: mysql:8.0.32-oracle   # arm image (only oracle linux base)
-    container_name: mysql
+  # mysql:
+  #   image: mysql:8.0.32-oracle   # arm image (only oracle linux base)
+  #   container_name: mysql
+  #   env_file:
+  #     - ./.env
+  #   ports:
+  #     - 3306:3306
+  #   volumes:
+  #     - mysql-store:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$MYSQL_DATABASE", "-p$MYSQL_ROOT_PASSWORD"]
+  #     interval: 30s
+  #     timeout: 5s
+  #     retries: 12
+  #     start_period: 30s
+
+  postgresql:
+    image: postgres:15.3-bullseye
+    tty: true
+    container_name: postgresql
     env_file:
       - ./.env
-    ports:
-      - 3306:3306
-    volumes:
-      - mysql-store:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "$MYSQL_DATABASE", "-p$MYSQL_ROOT_PASSWORD"]
-      interval: 30s
-      timeout: 5s
-      retries: 12
-      start_period: 30s
-
-  phpmyadmin:
-    image: phpmyadmin:latest
-    depends_on:
-      mysql:
-        condition: service_healthy
-    container_name: phpmyadmin
     environment:
-      - PMA_ARBITRARY=3
-      - PMA_HOSTS=mysql
-      - PMA_USER=${MYSQL_DATABASE}
-      - PMA_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      TZ: "Asia/Tokyo"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
     ports:
-      - 8088:80
-    healthcheck:
-      test: ["CMD", "curl", "-m", "5", "http://localhost/"]
-      interval: 15s
-      timeout: 5s
-      retries: 4
-      start_period: 10s
+      - 5432:5432
+    volumes:
+      - postgres-store:/var/lib/postgresql/data
+
+  # phpmyadmin:
+  #   image: phpmyadmin:latest
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   container_name: phpmyadmin
+  #   environment:
+  #     - PMA_ARBITRARY=3
+  #     - PMA_HOSTS=mysql
+  #     - PMA_USER=${MYSQL_DATABASE}
+  #     - PMA_PASSWORD=${MYSQL_ROOT_PASSWORD}
+  #   ports:
+  #     - 8088:80
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-m", "5", "http://localhost/"]
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 4
+  #     start_period: 10s
 
 volumes:
-  mysql-store:
+  postgres-store:
+  # mysql-store:

@@ -13,11 +13,11 @@ RUN \
 		# for sqlite
 		# libsqlite3-dev \
 
-		# for mysql or maria-db
-		libmariadb-dev \
+		# for postgresql
+		libpq-dev \
 
 		# when creating rails project.
-		# git \
+		git \
 
 # clear apt cache.
 	&& apt-get clean -y \
