@@ -40,7 +40,7 @@ services:
   #     start_period: 30s
 
   postgresql:
-    image: postgres:15.3-bullseye
+    image: postgres:15.6-bullseye
     tty: true
     container_name: postgresql
     env_file:
